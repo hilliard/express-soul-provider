@@ -1,5 +1,6 @@
 import { checkAuth, renderGreeting, showHideMenuItems } from './authUI.js'
 import { logout } from './logout.js'
+import { showAlert } from './modal.js'
 
 // Get coupon code from URL parameter
 const urlParams = new URLSearchParams(window.location.search)
@@ -44,16 +45,13 @@ confirmBtn.addEventListener('click', async () => {
     const data = await res.json()
 
     if (res.ok) {
-      // Show success and redirect
-      messageDiv.innerHTML = `<div class="message" style="background: rgba(0, 255, 0, 0.2); border: 1px solid rgba(0, 255, 0, 0.5); color: #51cf66;">
-        ✓ Order ${data.orderNumber} placed successfully!
-      </div>`
+      // Show success modal and redirect
+      await showAlert(
+        '✓ Order Placed Successfully!',
+        `Order ${data.orderNumber} has been placed.\n\nThank you for your purchase!`
+      )
       
-      orderDetails.style.display = 'none'
-      
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 2000)
+      window.location.href = '/'
     } else {
       messageDiv.innerHTML = `<div class="message error-message">${data.error || 'Order failed'}</div>`
       confirmBtn.disabled = false

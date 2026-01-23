@@ -6,9 +6,14 @@ export async function getDBConnection() {
 
 const dbPath = path.join('database.db')
 
- return open({
+ const db = await open({
    filename: dbPath,
    driver: sqlite3.Database
  }) 
+ 
+ // Enable foreign key constraints
+ await db.run('PRAGMA foreign_keys = ON')
+ 
+ return db
  
 } 

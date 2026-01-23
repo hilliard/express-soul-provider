@@ -110,6 +110,76 @@ square format 1:1 ratio, 4K ultra HD
 
 ---
 
+## 🧢 Merchandise & Products
+
+### **Hats / Headwear**
+
+```
+Professional product photography of a stylish black baseball cap,
+Soul Provider logo embroidered on front, clean white background,
+centered composition, studio lighting, e-commerce product shot,
+high resolution 4K, square format 1:1 ratio
+```
+
+**Alternative prompt:**
+
+```
+Modern streetwear hat product photo, Soul Provider branding,
+premium quality cap, minimalist product photography,
+soft shadows, commercial product shot, clean aesthetic
+```
+
+### **T-Shirts / Apparel**
+
+```
+Professional product photography of a black t-shirt with Soul Provider
+graphic print, laid flat on white background, centered composition,
+studio lighting, e-commerce product shot, high quality 4K,
+square format 1:1 ratio
+```
+
+**Alternative prompt:**
+
+```
+Vintage music festival t-shirt product photo, Soul Provider logo,
+retro graphic design, flat lay photography, clean white background,
+commercial product shot
+```
+
+### **Posters / Wall Art**
+
+```
+Vintage music poster design, Soul Provider branding, 1970s concert
+poster aesthetic, vibrant colors, retro typography, professional
+product photography, square format, high resolution 4K
+```
+
+### **Vinyl Accessories / Merch**
+
+```
+Professional product photography of music accessories, Soul Provider
+branded, minimalist design, clean white background, studio lighting,
+e-commerce style, square 1:1 ratio, 4K quality
+```
+
+### **Generic Merchandise**
+
+```
+Professional e-commerce product photography, Soul Provider branded
+merchandise, clean white background, centered composition, soft shadows,
+studio lighting, commercial product shot, square format 1:1 ratio,
+ultra high resolution 4K
+```
+
+**For specific items, customize the prompt:**
+
+- Replace "baseball cap" with: beanie, snapback, bucket hat, etc.
+- Replace "t-shirt" with: hoodie, sweatshirt, tank top, etc.
+- Add colors: navy blue, white, burgundy, etc.
+- Add details: embroidered logo, screen print, vintage wash, etc.
+
+---
+
 ## 📦 Bulk Image Organization & Renaming
 
 ### **Step 1: Download Images**
@@ -256,7 +326,17 @@ Get-ChildItem -Filter "*.jpg" | ForEach-Object {
 
 - **Descriptive:** `vinyl-groovy-nights.png`, `vinyl-midnight-soul.png` (more memorable)
 
-Choose whichever naming style you prefer! The genre-specific naming makes it easier to find appropriate images when adding products.
+### Merchandise Products (recommended naming):
+
+- **By Product Type:** `merch-[type]-[variant].png`
+  - `merch-hat-black.png`, `merch-hat-white.png`, ...
+  - `merch-tshirt-black.png`, `merch-tshirt-vintage.png`, ...
+  - `merch-hoodie-navy.png`, `merch-hoodie-grey.png`, ...
+  - `merch-poster-1.png`, `merch-poster-2.png`, ...
+
+- **Descriptive:** `soul-provider-hat.png`, `vintage-tour-tshirt.png` (more specific)
+
+Choose whichever naming style you prefer! The type-specific naming makes it easier to find appropriate images when adding products.
 
 ---
 

@@ -72,7 +72,12 @@ function renderCartItems(items, cartList) {
   cartList.innerHTML = ''
 
   if (!items || items.length === 0) {
-    cartList.innerHTML = '<li class="empty-cart">Your cart is empty</li>'
+    cartList.innerHTML = `
+      <li class="empty-cart">
+        <p>Your cart is empty</p>
+        <a href="/" class="continue-shopping-link">← Continue Shopping</a>
+      </li>
+    `
     return
   }
 
@@ -83,11 +88,14 @@ function renderCartItems(items, cartList) {
     const itemTotal = item.price * item.quantity
 
     li.innerHTML = `
-      <div>
-        <strong>${item.title}</strong> by ${item.artist}
-        <button data-id="${item.cartItemId}" class="remove-btn">🗑️</button>
+      <div class="cart-item-header">
+        <div class="cart-item-info">
+          <strong class="item-title">${item.title}</strong>
+          <span class="item-artist">by ${item.artist}</span>
+        </div>
+        <button data-id="${item.cartItemId}" class="remove-btn" title="Remove item">🗑️</button>
       </div>
-      <span>× ${item.quantity} = $${itemTotal.toFixed(2)}</span>
+      <span class="item-total">× ${item.quantity} = $${itemTotal.toFixed(2)}</span>
     `
 
     cartList.appendChild(li)

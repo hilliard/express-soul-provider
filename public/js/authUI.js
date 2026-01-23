@@ -53,3 +53,15 @@ export function showAddProductButton(user) {
   
   addProductLink.style.display = canAddProducts ? 'inline-block' : 'none'
 }
+
+// ===== Show manage products button for admin/artist roles =====
+
+export function showManageProductsButton(user) {
+  const manageProductsLink = document.getElementById('manage-products-link')
+  if (!manageProductsLink) return
+  
+  const roles = user && user.roles ? user.roles : []
+  const canManageProducts = roles.includes('admin') || roles.includes('artist')
+  
+  manageProductsLink.style.display = canManageProducts ? 'inline-block' : 'none'
+}

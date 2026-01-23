@@ -1,3 +1,5 @@
+import { showAlert } from './modal.js'
+
 // Check if user is logged in and has permissions
 async function checkAuth() {
   try {
@@ -23,6 +25,8 @@ function handleProductTypeChange() {
   const musicFields = document.querySelectorAll('.music-only')
   const yearInput = document.getElementById('year')
   const genreSelect = document.getElementById('genre')
+  const imageInput = document.getElementById('image')
+  const imageHelp = document.getElementById('image-help')
   
   const isMusicProduct = ['Album', 'Single', 'EP'].includes(typeSelect.value)
   
@@ -34,6 +38,15 @@ function handleProductTypeChange() {
   const songsSection = document.getElementById('songs-section')
   if (songsSection) {
     songsSection.style.display = isMusicProduct ? 'block' : 'none'
+  }
+  
+  // Update image field placeholder and help text based on type
+  if (isMusicProduct) {
+    imageInput.placeholder = 'sandy-door.png or vinyl-soul-1.png'
+    imageHelp.innerHTML = '<strong>Music products:</strong> Just the filename (e.g., sandy-door.png, vinyl-soul-1.png)'
+  } else {
+    imageInput.placeholder = 'images/merchandise/hats/hat-name.jpg'
+    imageHelp.innerHTML = '<strong>Merchandise:</strong> Full path from images/ folder<br>Examples: images/merchandise/hats/hat-soul-provider-sun.jpg<br>images/merchandise/tshirts/tshirt-vintage-black.jpg'
   }
   
   // Update required attributes
@@ -178,28 +191,20 @@ async function handleSubmit(event) {
       const productType = productData.type
       const songInfo = songs.length > 0 ? ` with ${songs.length} track${songs.length > 1 ? 's' : ''}` : ''
       
-      messageDiv.innerHTML = `
-        <div class="message success-message">
-          <h3 style="margin-top: 0;">✓ Product Successfully Added!</h3>
-          <p><strong>${productType}: ${productData.title}</strong></p>
-          <p>by ${productData.artist}</p>
-          <p>Product ID: ${data.productId}${songInfo}</p>
-          <p style="margin-bottom: 0;">Redirecting to home page in 3 seconds...</p>
-        </div>
-      `
       form.reset()
       
       // Clear songs container
       document.getElementById('songs-container').innerHTML = ''
       songCount = 0
       
-      // Scroll to message
-      messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      // Show success modal
+      await showAlert(
+        '✓ Product Successfully Added!',
+        `${productType}: "${productData.title}" by ${productData.artist}${songInfo}\n\nProduct ID: ${data.productId}\n\nRedirecting to home page...`
+      )
       
-      // Redirect to home after 3 seconds
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 3000)
+      // Redirect to home
+      window.location.href = '/'
     } else {
       // Error from server
       messageDiv.innerHTML = `<div class="message error-message">${data.error || 'Failed to add product'}</div>`

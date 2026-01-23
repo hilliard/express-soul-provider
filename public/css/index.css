@@ -107,6 +107,16 @@ header {
     justify-content: space-between;
 }
 
+header a {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+header a:hover {
+    opacity: 0.8;
+    text-decoration: none;
+}
+
 header img {
     width: clamp(80px, 15vw, 200px);
 }
@@ -236,6 +246,25 @@ footer {
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: background-color 0.3s;
+}
+
+.secondary-btn {
+    padding: 0.8em 1.5em;
+    background-color: transparent;
+    color: var(--color-text);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.secondary-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.secondary-btn:active {
+    background-color: rgba(255, 76, 123, 0.1);
 }
 
 .genre-label {
@@ -408,6 +437,97 @@ button:active {
     max-width: 600px;
 }
 
+.order-summary {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.order-summary h3 {
+    margin-top: 0;
+    color: var(--color-accent);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    color: var(--color-text);
+}
+
+.discount-line {
+    color: #51cf66;
+}
+
+.total-line {
+    border-top: 2px solid var(--color-accent);
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    font-size: 1.2rem;
+}
+
+.total-line strong {
+    color: var(--color-accent);
+}
+
+.coupon-section {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.coupon-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+}
+
+.coupon-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.coupon-input-group input {
+    flex: 1;
+    padding: 0.75rem;
+    background: var(--color-input-bg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+.coupon-input-group input:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.coupon-message {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    min-height: 1.5rem;
+}
+
+.coupon-message.success {
+    color: #51cf66;
+}
+
+.coupon-message.error {
+    color: #ff6b6b;
+}
+
+.cart-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
 .cart-main ul {
     list-style: none;
     width: 100%;
@@ -420,25 +540,79 @@ button:active {
     border-bottom: 1px solid var(--color-accent);
 }
 
-.cart-main ul li div {
+.cart-item-header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.25rem;
 }
 
-.cart-main ul li span {
+.cart-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.item-title {
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.item-artist {
+    font-size: 0.875rem;
+    color: #999;
+    font-style: italic;
+}
+
+.item-total {
     font-size: 14px;
+    color: var(--color-text);
 }
 
-.cart-main ul li button {
+.remove-btn {
     background-color: transparent;
-    margin-left: auto;
     border: 0;
     cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.25rem 0.5rem;
+    transition: transform 0.2s;
 }
 
-.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+.remove-btn:hover {
+    transform: scale(1.2);
+}
+
+.empty-cart {
+    text-align: center;
+    color: #999;
+    padding: 2rem 0;
+    font-style: italic;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.empty-cart p {
+  margin: 0;
+}
+
+.continue-shopping-link {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-accent);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.continue-shopping-link:hover {
+  background-color: #e63d6d;
+  text-decoration: none;
 }
 
 .cart-banner-link{
@@ -621,4 +795,359 @@ button:active {
 .coupon-applied-icon {
   color: #51cf66;
   font-size: 1.2rem;
+}
+
+/* -----------------------------------
+   Modal / Dialog System
+----------------------------------- */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.modal-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--color-bg-light);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal-visible .modal-content {
+  transform: scale(1);
+}
+
+.modal-title {
+  margin: 0 0 1rem 0;
+  color: var(--color-accent);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-message {
+  margin: 0 0 1.5rem 0;
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.modal-buttons button {
+  min-width: 100px;
+}
+
+/* -----------------------------------
+   Add Product Page
+----------------------------------- */
+
+.add-product-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.add-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #fff;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4a9eff;
+}
+
+.form-group small {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+.submit-btn {
+  padding: 1rem;
+  background: #4a9eff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover {
+  background: #3a8eef;
+}
+
+.submit-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #4a9eff;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Songs/Tracks Section */
+.songs-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.songs-section h3 {
+  margin-top: 0;
+  color: #4a9eff;
+}
+
+.song-entry {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border-left: 3px solid #4a9eff;
+}
+
+.song-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.song-entry-header h4 {
+  margin: 0;
+  color: #fff;
+}
+
+.remove-song-btn {
+  background: #ff4c7b;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.remove-song-btn:hover {
+  background: #e63d6d;
+}
+
+.song-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.song-fields .form-group {
+  margin-bottom: 0;
+}
+
+.add-song-btn {
+  background: #51cf66;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.add-song-btn:hover {
+  background: #40c057;
+}
+
+/* -----------------------------------
+   Manage Products Page
+----------------------------------- */
+
+.manage-products-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.filter-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.filter-section input,
+.filter-section select {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 1rem;
+}
+
+.filter-section input {
+  flex: 1;
+}
+
+.filter-section select {
+  min-width: 150px;
+}
+
+.products-table-container {
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-text);
+}
+
+.products-table thead {
+  background: rgba(255, 76, 123, 0.2);
+}
+
+.products-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.products-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.products-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.product-thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.type-album {
+  background: rgba(74, 158, 255, 0.3);
+  color: #4a9eff;
+}
+
+.type-single {
+  background: rgba(81, 207, 102, 0.3);
+  color: #51cf66;
+}
+
+.type-ep {
+  background: rgba(255, 184, 0, 0.3);
+  color: #ffb800;
+}
+
+.type-merch {
+  background: rgba(255, 76, 123, 0.3);
+  color: var(--color-accent);
+}
+
+.genre-tag {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.btn-edit,
+.btn-delete {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.btn-edit:hover,
+.btn-delete:hover {
+  transform: scale(1.2);
+}
+
+.btn-edit {
+  color: #4a9eff;
+}
+
+.btn-delete {
+  color: #ff6b6b;
 }

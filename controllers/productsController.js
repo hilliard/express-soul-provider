@@ -6,7 +6,7 @@ export async function getGenres(req, res) {
 
     const db = await getDBConnection()
 
-    const genreRows = await db.all('SELECT DISTINCT genre FROM products')
+    const genreRows = await db.all('SELECT DISTINCT genre FROM products WHERE genre IS NOT NULL ORDER BY genre')
     const genres = genreRows.map(row => row.genre)
     res.json(genres)
 
@@ -26,22 +26,31 @@ export async function getProducts(req, res) {
     let query = 'SELECT * FROM products'
     let params = []
 
-    const { genre, search } = req.query
+    const { genre, search, type } = req.query
+    
+    // console.log('getProducts called with:', { genre, search, type })
 
-    if (genre) {
-
+    if (type) {
+      // Filter by product type (Album, Single, EP, Merch)
+      // console.log('Filtering by type:', type)
+      query += ' WHERE type = ?'
+      params.push(type)
+    } else if (genre) {
+      // Filter by genre (for music products)
       query += ' WHERE genre = ?'
       params.push(genre)
-
     } else if (search) {
-
-      query += ' WHERE title LIKE ? OR artist LIKE ? OR genre LIKE ?'
+      // Search across multiple fields including type
+      query += ' WHERE title LIKE ? OR artist LIKE ? OR genre LIKE ? OR type LIKE ?'
       const searchPattern = `%${search}%`
-      params.push(searchPattern, searchPattern, searchPattern)
-      
+      params.push(searchPattern, searchPattern, searchPattern, searchPattern)
     }
     
     const products = await db.all(query, params)
+    
+   // console.log('Query:', query)
+   // console.log('Params:', params)
+   // console.log('Products returned:', products.length)
 
     res.json(products)
 
@@ -156,3 +165,93 @@ export async function createProduct(req, res) {
   }
 }
 
+export async function updateProduct(req, res) {
+  const productId = parseInt(req.params.id, 10)
+  
+  if (isNaN(productId)) {
+    return res.status(400).json({ error: 'Invalid product ID' })
+  }
+
+  let { title, artist, price, image, year, genre, stock, type } = req.body
+
+  // Validate required fields
+  if (!title || !artist || !price || !image) {
+    return res.status(400).json({ error: 'Title, artist, price, and image are required' })
+  }
+
+  // Trim string inputs
+  title = title.trim()
+  artist = artist.trim()
+  image = image.trim()
+  type = type ? type.trim() : 'Album'
+
+  // Validate type
+  const validTypes = ['Album', 'Single', 'EP', 'Merch']
+  if (!validTypes.includes(type)) {
+    return res.status(400).json({ error: 'Type must be Album, Single, EP, or Merch' })
+  }
+
+  try {
+    const db = await getDBConnection()
+
+    // Check if product exists
+    const existing = await db.get('SELECT id FROM products WHERE id = ?', [productId])
+    if (!existing) {
+      return res.status(404).json({ error: 'Product not found' })
+    }
+
+    // Update product
+    await db.run(
+      `UPDATE products 
+       SET title = ?, artist = ?, price = ?, image = ?, year = ?, genre = ?, stock = ?, type = ?
+       WHERE id = ?`,
+      [title, artist, price, image, year, genre, stock, type, productId]
+    )
+
+    res.json({ message: 'Product updated successfully', productId })
+
+  } catch (err) {
+    console.error('Error updating product:', err.message)
+    res.status(500).json({ error: 'Failed to update product', details: err.message })
+  }
+}
+
+export async function deleteProduct(req, res) {
+  const productId = parseInt(req.params.id, 10)
+  
+  if (isNaN(productId)) {
+    return res.status(400).json({ error: 'Invalid product ID' })
+  }
+
+  try {
+    const db = await getDBConnection()
+
+    // Check if product exists
+    const existing = await db.get('SELECT id, title FROM products WHERE id = ?', [productId])
+    if (!existing) {
+      return res.status(404).json({ error: 'Product not found' })
+    }
+
+    // Delete product (cart_items will be cascade deleted due to FK constraint)
+    const result = await db.run('DELETE FROM products WHERE id = ?', [productId])
+    
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Product not found or already deleted' })
+    }
+
+    res.status(204).send() // No content on successful delete
+
+  } catch (err) {
+    console.error('Error deleting product:', err.message)
+    
+    // Check if it's a foreign key constraint error
+    if (err.message.includes('FOREIGN KEY')) {
+      return res.status(400).json({ 
+        error: 'Cannot delete product',
+        details: 'Product is referenced by other records'
+      })
+    }
+    
+    res.status(500).json({ error: 'Failed to delete product', details: err.message })
+  }
+}

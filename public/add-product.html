@@ -5,177 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Product - Soul Provider</title>
     <link rel="stylesheet" href="/css/index.css" />
-    <style>
-      .add-product-container {
-        max-width: 600px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-      }
-
-      .add-product-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .form-group label {
-        font-weight: 500;
-        color: #fff;
-      }
-
-      .form-group input,
-      .form-group select {
-        padding: 0.75rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 4px;
-        background: rgba(0, 0, 0, 0.3);
-        color: #fff;
-        font-size: 1rem;
-      }
-
-      .form-group input:focus,
-      .form-group select:focus {
-        outline: none;
-        border-color: #4a9eff;
-      }
-
-      .form-group small {
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.875rem;
-      }
-
-      .submit-btn {
-        padding: 1rem;
-        background: #4a9eff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.3s;
-      }
-
-      .submit-btn:hover {
-        background: #3a8eef;
-      }
-
-      .submit-btn:disabled {
-        background: #666;
-        cursor: not-allowed;
-      }
-
-      .message {
-        padding: 1rem;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-        text-align: center;
-      }
-
-      .error-message {
-        background: rgba(255, 0, 0, 0.2);
-        border: 1px solid rgba(255, 0, 0, 0.5);
-        color: #ff6b6b;
-      }
-
-      .success-message {
-        background: rgba(0, 255, 0, 0.2);
-        border: 1px solid rgba(0, 255, 0, 0.5);
-        color: #51cf66;
-      }
-
-      .back-link {
-        display: inline-block;
-        margin-bottom: 1rem;
-        color: #4a9eff;
-        text-decoration: none;
-      }
-
-      .back-link:hover {
-        text-decoration: underline;
-      }
-
-      /* Songs/Tracks Section */
-      .songs-section {
-        margin-top: 2rem;
-        padding: 1.5rem;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .songs-section h3 {
-        margin-top: 0;
-        color: #4a9eff;
-      }
-
-      .song-entry {
-        background: rgba(0, 0, 0, 0.2);
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border-radius: 4px;
-        border-left: 3px solid #4a9eff;
-      }
-
-      .song-entry-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-
-      .song-entry-header h4 {
-        margin: 0;
-        color: #fff;
-      }
-
-      .remove-song-btn {
-        background: #ff4c7b;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9rem;
-      }
-
-      .remove-song-btn:hover {
-        background: #e63d6d;
-      }
-
-      .song-fields {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-
-      .song-fields .form-group {
-        margin-bottom: 0;
-      }
-
-      .add-song-btn {
-        background: #51cf66;
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 600;
-        margin-top: 1rem;
-      }
-
-      .add-song-btn:hover {
-        background: #40c057;
-      }
-    </style>
   </head>
   <body>
     <nav>
@@ -238,7 +67,7 @@
         </div>
 
         <div class="form-group">
-          <label for="image">Image Filename *</label>
+          <label for="image">Image Path *</label>
           <input 
             type="text" 
             id="image" 
@@ -246,7 +75,11 @@
             required 
             placeholder="sandy-door.png"
           />
-          <small>Image file must exist in /public/images/</small>
+          <small id="image-help">
+            <strong>Music:</strong> sandy-door.png or vinyl-soul-1.png<br>
+            <strong>Merch (Hats):</strong> images/merchandise/hats/hat-soul-provider-sun.jpg<br>
+            <strong>Merch (Other):</strong> images/merchandise/[category]/[filename]
+          </small>
         </div>
 
         <div class="form-group music-only">

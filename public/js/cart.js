@@ -1,9 +1,11 @@
 import { logout } from './logout.js'
 import { checkAuth, renderGreeting, showHideMenuItems } from './authUI.js'
-import { loadCart, removeItem, applyCoupon, checkout } from './cartService.js'
+import { loadCart, removeItem, removeAll, applyCoupon, checkout } from './cartService.js'
+import { showConfirm } from './modal.js'
 
 const dom = {
   checkoutBtn: document.getElementById('checkout-btn'),
+  clearCartBtn: document.getElementById('clear-cart-btn'),
   userMessage: document.getElementById('user-message'),
   cartList: document.getElementById('cart-list'),
   subtotalAmount: document.getElementById('subtotal-amount'),
@@ -34,6 +36,17 @@ dom.applyCouponBtn.addEventListener('click', () => {
 dom.couponInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     applyCoupon(dom)
+  }
+})
+
+// Clear cart
+dom.clearCartBtn.addEventListener('click', async () => {
+  const confirmed = await showConfirm(
+    'Clear Cart',
+    'Are you sure you want to remove all items from your cart?'
+  )
+  if (confirmed) {
+    removeAll(dom)
   }
 })
 

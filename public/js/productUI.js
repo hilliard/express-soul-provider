@@ -5,14 +5,20 @@ import { addBtnListeners } from './cartService.js'
 export function renderProducts(products) {
   const albumsContainer = document.getElementById('products-container')
   const cards = products.map((album) => {
+    // Handle image path - if image already includes 'images/', don't add it again
+    const imagePath = album.image.startsWith('images/') ? album.image : `images/${album.image}`
+    
+    // Display 'Merch' for merchandise items instead of null genre
+    const displayGenre = album.genre || (album.type === 'Merch' ? 'Merch' : 'Music')
+    
     return `
       <div class="product-card">
-        <img src="./images/${album.image}" alt="${album.title}">
+        <img src="./${imagePath}" alt="${album.title}">
         <h2>${album.title}</h2>
         <h3>${album.artist}</h3>
         <p>$${album.price}</p>
         <button class="main-btn add-btn" data-id="${album.id}">Add to Cart</button>
-        <p class="genre-label">${album.genre}</p>
+        <p class="genre-label">${displayGenre}</p>
       </div>
     `
   }).join('')

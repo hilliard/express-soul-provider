@@ -1,4 +1,4 @@
-import { checkAuth, renderGreeting, showHideMenuItems, showAddProductButton } from './authUI.js'
+import { checkAuth, renderGreeting, showHideMenuItems, showAddProductButton, showManageProductsButton } from './authUI.js'
 import { logout } from './logout.js'
 
 // ===== Menu Toggle =====
@@ -45,14 +45,20 @@ function renderProducts(products) {
 
   const cards = products
     .map((album) => {
+      // Handle image path - if image already includes 'images/', don't add it again
+      const imagePath = album.image.startsWith('images/') ? album.image : `images/${album.image}`;
+      
+      // Display 'Merch' for merchandise items instead of null genre
+      const displayGenre = album.genre || (album.type === 'Merch' ? 'Merch' : 'Music');
+      
       return `
       <div class="product-card">
-        <img src="./images/${album.image}" alt="${album.title}">
+        <img src="./${imagePath}" alt="${album.title}">
         <h2>${album.title}</h2>
         <h3>${album.artist}</h3>
         <p>$${album.price}</p>
         <button class="add-btn" data-product-id="${album.id}">Add to Cart</button>
-        <p class="genre-label">${album.genre}</p>
+        <p class="genre-label">${displayGenre}</p>
       </div>
     `;
     })
@@ -153,6 +159,12 @@ async function populateGenreSelect() {
       option.textContent = genre;
       select.appendChild(option);
     });
+    
+    // Add Merchandise option at the end
+    const merchOption = document.createElement('option');
+    merchOption.value = 'type:Merch';
+    merchOption.textContent = 'Merchandise';
+    select.appendChild(merchOption);
   } catch (error) {
     console.error('Failed to populate genres:', error);
   }
@@ -182,11 +194,21 @@ document.querySelector('form').addEventListener('submit', (e) => {
 });
 
 document.getElementById('genre-select').addEventListener('change', async (e) => {
-  const genre = e.target.value;
-  // If the genre is empty (e.g., "All Genres" is selected), fetch all products
-  const filters = genre ? { genre } : {};
-  const products = await getProducts(filters);
-  renderProducts(products);
+  const value = e.target.value;
+  
+  // Check if this is a type filter (for Merchandise)
+  if (value.startsWith('type:')) {
+    const type = value.replace('type:', '');
+    console.log('Filtering by type:', type);
+    const products = await getProducts({ type });
+    console.log('Products returned:', products.length);
+    renderProducts(products);
+  } else {
+    // Regular genre filter
+    const filters = value ? { genre: value } : {};
+    const products = await getProducts(filters);
+    renderProducts(products);
+  }
 });
 
 // ===== Logout =====
@@ -205,6 +227,7 @@ async function init() {
   renderGreeting(user)
   showHideMenuItems(user)
   showAddProductButton(user)
+  showManageProductsButton(user)
   
   // Only update cart icon if user is logged in
   if (user) {
