@@ -209,42 +209,10 @@ export async function applyCoupon(dom) {
 }
 
 export async function checkout(dom) {
-  const { checkoutBtn, userMessage } = dom
-
-  checkoutBtn.disabled = true
-  userMessage.textContent = 'Processing order...'
-
-  try {
-    const res = await fetch('/api/checkout/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ couponCode: currentCouponCode })
-    })
-
-    const data = await res.json()
-
-    if (res.ok) {
-      userMessage.textContent = `✓ Order ${data.orderNumber} placed successfully! Total: $${data.total.toFixed(2)}`
-      userMessage.className = 'success-message'
-      
-      // Clear cart display
-      currentCouponCode = null
-      await loadCart(dom)
-      
-      // Redirect to home after 3 seconds
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 3000)
-    } else {
-      userMessage.textContent = data.error || 'Order failed'
-      userMessage.className = 'error-message'
-      checkoutBtn.disabled = false
-    }
-  } catch (err) {
-    console.error('Error creating order:', err)
-    userMessage.textContent = 'Error processing order'
-    userMessage.className = 'error-message'
-    checkoutBtn.disabled = false
-  }
+  // Redirect to order confirmation page with coupon if applied
+  const url = currentCouponCode 
+    ? `/order-confirmation.html?coupon=${encodeURIComponent(currentCouponCode)}`
+    : '/order-confirmation.html'
+  
+  window.location.href = url
 }

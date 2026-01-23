@@ -14,12 +14,14 @@ import * as migration001 from './migrations/001-create-new-schema.js'
 import * as migration002 from './migrations/002-migrate-users-to-humans.js'
 import * as migration003 from './migrations/003-cleanup-old-schema.js'
 import * as migration004 from './migrations/004-create-orders-and-coupons.js'
+import * as migration005 from './migrations/005-add-songs-and-product-types.js'
 
 const migrations = [
   { id: '001', name: 'create-new-schema', module: migration001 },
   { id: '002', name: 'migrate-users-to-humans', module: migration002 },
   { id: '003', name: 'cleanup-old-schema', module: migration003 },
-  { id: '004', name: 'create-orders-and-coupons', module: migration004 }
+  { id: '004', name: 'create-orders-and-coupons', module: migration004 },
+  { id: '005', name: 'add-songs-and-product-types', module: migration005 }
 ]
 
 async function createMigrationsTable() {

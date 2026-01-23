@@ -1,4 +1,4 @@
-import { checkAuth, renderGreeting, showHideMenuItems } from './authUI.js'
+import { checkAuth, renderGreeting, showHideMenuItems, showAddProductButton } from './authUI.js'
 import { logout } from './logout.js'
 
 // ===== Menu Toggle =====
@@ -59,6 +59,79 @@ function renderProducts(products) {
     .join('');
 
   albumsContainer.innerHTML = cards;
+  
+  // Attach event listeners to "Add to Cart" buttons
+  attachCartButtonListeners();
+}
+
+// ===== Add to Cart Functionality =====
+/**
+ * Attaches event listeners to all "Add to Cart" buttons.
+ */
+function attachCartButtonListeners() {
+  document.querySelectorAll('.add-btn').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      const productId = event.currentTarget.dataset.productId;
+
+      try {
+        const res = await fetch('/api/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ productId })
+        });
+
+        if (!res.ok) {
+          // User not logged in, redirect to login
+          window.location.href = '/login.html';
+          return;
+        }
+
+        await updateCartIcon();
+      } catch (err) {
+        console.error('Error adding to cart:', err);
+      }
+    });
+  });
+}
+
+// ===== Update Cart Icon =====
+/**
+ * Updates the cart icon badge with the current item count.
+ * Only makes the request if the user is logged in.
+ */
+async function updateCartIcon() {
+  try {
+    // Check if user is logged in first
+    const user = await checkAuth()
+    
+    if (!user) {
+      // Not logged in - clear cart icon
+      document.getElementById('cart-banner').innerHTML = ''
+      return
+    }
+    
+    const res = await fetch('/api/cart/cart-count', {
+      credentials: 'include'
+    })
+    
+    if (!res.ok) {
+      // Session expired or other error - clear cart icon
+      document.getElementById('cart-banner').innerHTML = ''
+      return
+    }
+    
+    const obj = await res.json();
+    const totalItems = obj.totalItems;
+
+    document.getElementById('cart-banner').innerHTML =
+      totalItems > 0
+        ? `<a href="/cart.html"><img src="images/cart.png" alt="cart">${totalItems}</a>`
+        : '';
+  } catch (err) {
+    console.error('Error updating cart icon:', err);
+    document.getElementById('cart-banner').innerHTML = ''
+  }
 }
 
 // ===== Genre Dropdown =====
@@ -128,9 +201,15 @@ if (logoutBtn) {
  */
 async function init() {
   // Check auth status and update UI
-  const userName = await checkAuth()
-  renderGreeting(userName)
-  showHideMenuItems(userName)
+  const user = await checkAuth()
+  renderGreeting(user)
+  showHideMenuItems(user)
+  showAddProductButton(user)
+  
+  // Only update cart icon if user is logged in
+  if (user) {
+    await updateCartIcon()
+  }
   
   await populateGenreSelect();
   const products = await getProducts();

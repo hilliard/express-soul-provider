@@ -1,0 +1,139 @@
+not yet I'm thinking of restructuring the database, I think I want to have 'humans': ie 'users', 'customers' and 'artists' (maybe 'suppliers', 'employees' etc) and can be 1 or many-to-many.
+I am thinking of converting all my projects to this design so make it flexible and portable    
+
+all carbon based units, 'humans' have distinct attributes firstname, lastname address, gender etc 
+if they are 'employees' they would have job titles and salaries etc, if they are customers, they will have orders and carts, 
+
+I might also consider a table of addresses which humans have, but so do suppliers 
+
+humans can change email addresses in cases like this, I would like the database to maintain a history of all the humans email, addresses or any attribute that might change 
+
+Since I've not seen a database designed this way, maybe it is a bad idea, if so advise me as such
+
+Below is an example of users having roles, I would change these to site_roles, because they could be a site admin and an employee of the company
+
+users (
+    user_id 
+    username
+    email 
+    password_hash 
+    
+    first_name VARCHAR(100),                
+    last_name VARCHAR(100),                 
+    date_of_birth DATE,
+	gender ? 
+	
+    phone_number VARCHAR(20),               
+    address                
+    
+    is_active BOOLEAN DEFAULT TRUE,         
+    is_verified BOOLEAN DEFAULT FALSE,      
+    site_role VARCHAR(50) DEFAULT 'user',        
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Record creation time
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+Roles (
+    RoleID INT PRIMARY KEY AUTO_INCREMENT,
+    RoleName VARCHAR(50) NOT NULL UNIQUE,
+    Description VARCHAR(255)
+);
+
+UserRoles (
+    UserID INT NOT NULL,
+    RoleID INT NOT NULL,
+    AssignedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (UserID, RoleID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
+    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID) ON DELETE CASCADE
+);
+
+-- PERMISSIONS table: defines actions or resources
+Permissions (
+    PermissionID INT PRIMARY KEY AUTO_INCREMENT,
+    PermissionName VARCHAR(50) NOT NULL UNIQUE,
+    Description VARCHAR(255)
+);
+
+-- ROLE_PERMISSIONS table: many-to-many relationship between Roles and Permissions
+RolePermissions (
+    RoleID INT NOT NULL,
+    PermissionID INT NOT NULL,
+    PRIMARY KEY (RoleID, PermissionID),
+    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID) ON DELETE CASCADE,
+    FOREIGN KEY (PermissionID) REFERENCES Permissions(PermissionID) ON DELETE CASCADE
+);
+
+Example Data
+Sql
+
+Copy code
+-- Insert roles
+INSERT INTO Roles (RoleName, Description) VALUES
+('Admin', 'Full access to the system'),
+('Editor', 'Can edit content'),
+('Viewer', 'Can view content only');
+
+-- Insert permissions
+INSERT INTO Permissions (PermissionName, Description) VALUES
+('CREATE_USER', 'Can create new users'),
+('EDIT_CONTENT', 'Can edit existing content'),
+('VIEW_CONTENT', 'Can view content');
+
+-- Assign permissions to roles
+INSERT INTO RolePermissions (RoleID, PermissionID) VALUES
+(1, 1), -- Admin -> CREATE_USER
+(1, 2), -- Admin -> EDIT_CONTENT
+(1, 3), -- Admin -> VIEW_CONTENT
+(2, 2), -- Editor -> EDIT_CONTENT
+(2, 3), -- Editor -> VIEW_CONTENT
+(3, 3); -- Viewer -> VIEW_CONTENT
+
+-- Create a user
+INSERT INTO Users (Username, PasswordHash, Email) VALUES
+('john_doe', 'hashed_password_here', 'john@example.com');
+
+-- Assign user to a role
+INSERT INTO UserRoles (UserID, RoleID) VALUES
+(1, 1); -- john_doe -> Admin
+
+
+
+
+This website "Soul Providers" is going to be a prototype for artists who want to sell their music. 
+It is currently configured as an "independant music" site. I want to convert it to an Rhytm and Blues, 
+Soul, Funk website.
+
+Convert the genres: 
+rock => RnB
+indie => Soul
+ambient => Funk
+folk => Gospel
+punk => Blues
+
+Convert the artists names to something more 'Urban' similar to 1970 Motown artists
+
+
+// Add address to a human
+const addr = await db.run(
+  `INSERT INTO addresses (street_line1, city, state_province, postal_code, country, address_type)
+   VALUES (?, ?, ?, ?, ?, ?)`,
+  ['123 Main St', 'New York', 'NY', '10001', 'USA', 'home']
+)
+
+await db.run(
+  `INSERT INTO addressable (address_id, entity_type, entity_id, is_primary, effective_to)
+   VALUES (?, 'human', ?, 1, NULL)`,
+  [addr.lastID, humanId]
+)
+
+// Query current addresses for a human
+const addresses = await db.all(
+  `SELECT a.* FROM addresses a
+   JOIN addressable ab ON a.id = ab.address_id
+   WHERE ab.entity_type = 'human' 
+   AND ab.entity_id = ?
+   AND ab.effective_to IS NULL`,
+  [humanId]
+)

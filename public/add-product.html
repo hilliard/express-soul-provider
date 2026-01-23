@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Product - Soul Provider</title>
+    <link rel="stylesheet" href="/css/index.css" />
+    <style>
+      .add-product-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+
+      .add-product-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .form-group label {
+        font-weight: 500;
+        color: #fff;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        font-size: 1rem;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #4a9eff;
+      }
+
+      .form-group small {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+      }
+
+      .submit-btn {
+        padding: 1rem;
+        background: #4a9eff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .submit-btn:hover {
+        background: #3a8eef;
+      }
+
+      .submit-btn:disabled {
+        background: #666;
+        cursor: not-allowed;
+      }
+
+      .message {
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .error-message {
+        background: rgba(255, 0, 0, 0.2);
+        border: 1px solid rgba(255, 0, 0, 0.5);
+        color: #ff6b6b;
+      }
+
+      .success-message {
+        background: rgba(0, 255, 0, 0.2);
+        border: 1px solid rgba(0, 255, 0, 0.5);
+        color: #51cf66;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: #4a9eff;
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+
+      /* Songs/Tracks Section */
+      .songs-section {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .songs-section h3 {
+        margin-top: 0;
+        color: #4a9eff;
+      }
+
+      .song-entry {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+        border-left: 3px solid #4a9eff;
+      }
+
+      .song-entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .song-entry-header h4 {
+        margin: 0;
+        color: #fff;
+      }
+
+      .remove-song-btn {
+        background: #ff4c7b;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      .remove-song-btn:hover {
+        background: #e63d6d;
+      }
+
+      .song-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .song-fields .form-group {
+        margin-bottom: 0;
+      }
+
+      .add-song-btn {
+        background: #51cf66;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 1rem;
+      }
+
+      .add-song-btn:hover {
+        background: #40c057;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <h1>Soul Provider</h1>
+      <div class="nav-links">
+        <a href="/" class="back-link">← Back to Store</a>
+      </div>
+    </nav>
+
+    <div class="add-product-container">
+      <h2>Add New Product</h2>
+      
+      <div id="message"></div>
+
+      <form class="add-product-form" id="add-product-form">
+        <div class="form-group">
+          <label for="type">Product Type *</label>
+          <select id="type" name="type" required>
+            <option value="Album">Album</option>
+            <option value="Single">Single</option>
+            <option value="EP">EP</option>
+            <option value="Merch">Merchandise</option>
+          </select>
+          <small>Singles and EPs require track listings</small>
+        </div>
+
+        <div class="form-group">
+          <label for="title">Product Title *</label>
+          <input 
+            type="text" 
+            id="title" 
+            name="title" 
+            required 
+            placeholder="Enter product title"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="artist">Artist/Brand *</label>
+          <input 
+            type="text" 
+            id="artist" 
+            name="artist" 
+            required 
+            placeholder="Enter artist or brand name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="price">Price (USD) *</label>
+          <input 
+            type="number" 
+            id="price" 
+            name="price" 
+            step="0.01" 
+            min="0" 
+            required 
+            placeholder="0.00"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="image">Image Filename *</label>
+          <input 
+            type="text" 
+            id="image" 
+            name="image" 
+            required 
+            placeholder="sandy-door.png"
+          />
+          <small>Image file must exist in /public/images/</small>
+        </div>
+
+        <div class="form-group music-only">
+          <label for="year">Year</label>
+          <input 
+            type="number" 
+            id="year" 
+            name="year" 
+            min="1900" 
+            max="2027" 
+            placeholder="2024"
+          />
+          <small>Required for Albums, Singles, and EPs</small>
+        </div>
+
+        <div class="form-group music-only">
+          <label for="genre">Genre</label>
+          <select id="genre" name="genre">
+            <option value="">Select a genre</option>
+            <option value="RnB">RnB</option>
+            <option value="Soul">Soul</option>
+            <option value="Funk">Funk</option>
+            <option value="Gospel">Gospel</option>
+            <option value="Blues">Blues</option>
+            <option value="Jazz">Jazz</option>
+            <option value="Disco">Disco</option>
+          </select>
+          <small>Required for Albums, Singles, and EPs</small>
+        </div>
+
+        <div class="form-group">
+          <label for="stock">Stock Quantity</label>
+          <input 
+            type="number" 
+            id="stock" 
+            name="stock" 
+            min="0" 
+            value="12" 
+            placeholder="12"
+          />
+          <small>Defaults to 12 if not specified</small>
+        </div>
+
+        <!-- Songs/Tracks Section (only for music products) -->
+        <div class="songs-section music-only" id="songs-section">
+          <h3>Track Listing</h3>
+          <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 1rem;">
+            Add songs/tracks for this release (optional - can be added later)
+          </p>
+          
+          <div id="songs-container"></div>
+          
+          <button type="button" class="add-song-btn" id="add-song-btn">+ Add Track</button>
+        </div>
+
+        <button type="submit" class="submit-btn">Add Product</button>
+      </form>
+    </div>
+
+    <script type="module" src="/js/add-product.js"></script>
+  </body>
+</html>

@@ -12,7 +12,7 @@ export async function checkAuth() {
     if (!user.isLoggedIn) {
       return false
     }
-    return user.name
+    return { name: user.name, roles: user.roles || [] }
 
   } catch (err) {
     console.log(err, 'Auth check failed')
@@ -22,8 +22,10 @@ export async function checkAuth() {
 
 // ===== Greet user or guest =====
 
-export function renderGreeting(name) {
+export function renderGreeting(user) {
   const greetingEl = document.getElementById('greeting')
+  const name = user && user.name ? user.name : (typeof user === 'string' ? user : null)
+  
   if (name) {
     greetingEl.textContent = name
   } else {
@@ -33,9 +35,21 @@ export function renderGreeting(name) {
 
 // ===== Only display logout button if logged in, else display log in/sign in options =====
 
-export function showHideMenuItems(name) {
-  const isLoggedIn = name
+export function showHideMenuItems(user) {
+  const isLoggedIn = user && (user.name || typeof user === 'string')
   document.getElementById('login').style.display = isLoggedIn ? 'none' : 'inline'
   document.getElementById('signup').style.display = isLoggedIn ? 'none' : 'inline'
   document.getElementById('logout-btn').style.display = isLoggedIn ? 'inline' : 'none'
+}
+
+// ===== Show add product button for admin/artist roles =====
+
+export function showAddProductButton(user) {
+  const addProductLink = document.getElementById('add-product-link')
+  if (!addProductLink) return
+  
+  const roles = user && user.roles ? user.roles : []
+  const canAddProducts = roles.includes('admin') || roles.includes('artist')
+  
+  addProductLink.style.display = canAddProducts ? 'inline-block' : 'none'
 }
