@@ -1,7 +1,22 @@
 import { showAlert } from './modal.js'
+import { checkAuth, renderGreeting, showHideMenuItems } from './authUI.js'
 
-// Check if user is logged in and has permissions
-async function checkAuth() {
+// Initialize auth UI
+async function initAuth() {
+  const user = await checkAuth()
+  
+  if (!user) {
+    window.location.href = '/login.html'
+    return false
+  }
+  
+  renderGreeting(user)
+  showHideMenuItems(user)
+  return true
+}
+
+// Check if user has permissions to add products (moved from previous checkAuth)
+async function checkPermissions() {
   try {
     const res = await fetch('/api/auth/me')
     const user = await res.json()
@@ -220,7 +235,7 @@ async function handleSubmit(event) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
-  const isAuthenticated = await checkAuth()
+  const isAuthenticated = await initAuth()
   
   if (isAuthenticated) {
     const form = document.getElementById('add-product-form')
