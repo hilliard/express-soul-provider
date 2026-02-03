@@ -274,15 +274,15 @@ export async function requirePermission(permissionName) {
 1. **Rename cart_items.user_id** → `human_id`
 2. **Add foreign key** cart_items.human_id → customers.human_id
 3. **Drop old users table** (after backup)
-4. **Update products.artist** (TEXT) → optionally link to artists table via new `artist_id INTEGER`
+4. **Update products.artist** (TEXT) → optionally link to artists table via new `artist_human_id INTEGER`
 
 ### Phase 5: Optional Enhancements
 
 #### 5.1 Link Products to Artists
 
 ```sql
-ALTER TABLE products ADD COLUMN artist_id INTEGER;
-ALTER TABLE products ADD FOREIGN KEY (artist_id) REFERENCES artists(human_id);
+ALTER TABLE products ADD COLUMN artist_human_id INTEGER;
+ALTER TABLE products ADD FOREIGN KEY (artist_human_id) REFERENCES artists(human_id);
 -- Keep artist TEXT for now, gradually populate artist_id
 ```
 

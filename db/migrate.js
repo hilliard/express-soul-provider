@@ -15,13 +15,19 @@ import * as migration002 from './migrations/002-migrate-users-to-humans.js'
 import * as migration003 from './migrations/003-cleanup-old-schema.js'
 import * as migration004 from './migrations/004-create-orders-and-coupons.js'
 import * as migration005 from './migrations/005-add-songs-and-product-types.js'
+import * as migration006 from './migrations/006-songs-bridge-table-and-media.js'
+import * as migration007 from './migrations/007-seed-artists-from-products.js'
+import * as migration008 from './migrations/008-rename-artist-id-to-artist-human-id.js'
 
 const migrations = [
   { id: '001', name: 'create-new-schema', module: migration001 },
   { id: '002', name: 'migrate-users-to-humans', module: migration002 },
   { id: '003', name: 'cleanup-old-schema', module: migration003 },
   { id: '004', name: 'create-orders-and-coupons', module: migration004 },
-  { id: '005', name: 'add-songs-and-product-types', module: migration005 }
+  { id: '005', name: 'add-songs-and-product-types', module: migration005 },
+  { id: '006', name: 'songs-bridge-table-and-media', module: migration006 },
+  { id: '007', name: 'seed-artists-from-products', module: migration007 },
+  { id: '008', name: 'rename-artist-id-to-artist-human-id', module: migration008 }
 ]
 
 async function createMigrationsTable() {

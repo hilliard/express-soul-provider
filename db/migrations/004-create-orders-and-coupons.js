@@ -52,18 +52,18 @@ export async function up() {
         quantity INTEGER NOT NULL DEFAULT 1,
         unit_price REAL NOT NULL,
         line_total REAL NOT NULL,
-        artist_id INTEGER,
+        artist_human_id INTEGER,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT,
-        FOREIGN KEY (artist_id) REFERENCES artists(human_id) ON DELETE SET NULL
+        FOREIGN KEY (artist_human_id) REFERENCES artists(human_id) ON DELETE SET NULL
       )
     `)
     
     await db.exec(`
       CREATE INDEX idx_order_items_order ON order_items(order_id);
       CREATE INDEX idx_order_items_product ON order_items(product_id);
-      CREATE INDEX idx_order_items_artist ON order_items(artist_id);
+      CREATE INDEX idx_order_items_artist ON order_items(artist_human_id);
     `)
     
     console.log('Creating coupons table...')

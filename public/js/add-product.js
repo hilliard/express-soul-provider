@@ -42,6 +42,7 @@ function handleProductTypeChange() {
   const genreSelect = document.getElementById('genre')
   const imageInput = document.getElementById('image')
   const imageHelp = document.getElementById('image-help')
+  const songsContainer = document.getElementById('songs-container')
   
   const isMusicProduct = ['Album', 'Single', 'EP'].includes(typeSelect.value)
   
@@ -53,6 +54,17 @@ function handleProductTypeChange() {
   const songsSection = document.getElementById('songs-section')
   if (songsSection) {
     songsSection.style.display = isMusicProduct ? 'block' : 'none'
+  }
+  
+  // Auto-add first song for Singles and EPs
+  if ((typeSelect.value === 'Single' || typeSelect.value === 'EP') && songCount === 0) {
+    addSongEntry()
+  }
+  
+  // Clear songs if switching to non-music product
+  if (!isMusicProduct && songsContainer) {
+    songsContainer.innerHTML = ''
+    songCount = 0
   }
   
   // Update image field placeholder and help text based on type
@@ -94,7 +106,7 @@ function addSongEntry() {
     </div>
     <div class="song-fields">
       <div class="form-group">
-        <label>Track Number</label>
+        <label>Track Number *</label>
         <input type="number" name="songs[${songCount}][track_number]" value="${songCount}" min="1" required />
       </div>
       <div class="form-group">
@@ -107,8 +119,41 @@ function addSongEntry() {
         <small>Optional - leave blank if unknown</small>
       </div>
       <div class="form-group">
+        <label>BPM</label>
+        <input type="number" name="songs[${songCount}][bpm]" min="0" max="300" placeholder="e.g., 120" />
+        <small>Beats per minute (optional)</small>
+      </div>
+      <div class="form-group">
+        <label>ISRC Code</label>
+        <input type="text" name="songs[${songCount}][isrc]" maxlength="12" placeholder="CC-XXX-YY-NNNNN" />
+        <small>International Standard Recording Code (optional)</small>
+      </div>
+      <div class="form-group">
+        <label>File Path</label>
+        <input type="text" name="songs[${songCount}][file_path]" placeholder="media/audio/artist/album/01-song.mp3" />
+        <small>Relative path to audio file (optional)</small>
+      </div>
+      <div class="form-group">
+        <label>File Format</label>
+        <select name="songs[${songCount}][file_format]">
+          <option value="">Not specified</option>
+          <option value="mp3" selected>MP3</option>
+          <option value="wav">WAV</option>
+          <option value="aiff">AIFF</option>
+          <option value="aac">AAC</option>
+          <option value="flac">FLAC</option>
+          <option value="ogg">OGG</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Price (USD)</label>
         <input type="number" name="songs[${songCount}][individual_price]" step="0.01" value="0.99" min="0" />
+      </div>
+      <div class="form-group">
+        <label style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" name="songs[${songCount}][is_explicit]" value="1" />
+          Explicit Content
+        </label>
       </div>
       <div class="form-group" style="grid-column: 1 / -1;">
         <label>Featured Artist (Optional)</label>

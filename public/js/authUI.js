@@ -37,9 +37,14 @@ export function renderGreeting(user) {
 
 export function showHideMenuItems(user) {
   const isLoggedIn = user && (user.name || typeof user === 'string')
-  document.getElementById('login').style.display = isLoggedIn ? 'none' : 'inline'
-  document.getElementById('signup').style.display = isLoggedIn ? 'none' : 'inline'
-  document.getElementById('logout-btn').style.display = isLoggedIn ? 'inline' : 'none'
+  
+  const loginEl = document.getElementById('login')
+  const signupEl = document.getElementById('signup')
+  const logoutBtn = document.getElementById('logout-btn')
+  
+  if (loginEl) loginEl.style.display = isLoggedIn ? 'none' : 'inline'
+  if (signupEl) signupEl.style.display = isLoggedIn ? 'none' : 'inline'
+  if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline' : 'none'
 }
 
 // ===== Show add product button for admin/artist roles =====

@@ -1,20 +1,30 @@
 import { getDBConnection } from '../db/db.js'
 
+// Canonical genre list - matches songs table CHECK constraint
+const GENRES = [
+  'RnB',
+  'Soul', 
+  'Funk',
+  'Jazz',
+  'Gospel',
+  'Blues',
+  'Disco',
+  'Rock',
+  'Pop',
+  'Country',
+  'HipHop',
+  'Rap',
+  'Classical',
+  'Reggae',
+  'Electronic',
+  'Dance',
+  'World'
+]
+
 export async function getGenres(req, res) {
-
-  try {
-
-    const db = await getDBConnection()
-
-    const genreRows = await db.all('SELECT DISTINCT genre FROM products WHERE genre IS NOT NULL ORDER BY genre')
-    const genres = genreRows.map(row => row.genre)
-    res.json(genres)
-
-  } catch (err) {
-
-    res.status(500).json({error: 'Failed to fetch genres', details: err.message})
-
-  }
+  // Return canonical list instead of querying database
+  // This ensures consistency with songs table schema
+  res.json(GENRES)
 }
 
 export async function getProducts(req, res) {
