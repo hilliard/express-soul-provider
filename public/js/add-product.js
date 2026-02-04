@@ -150,6 +150,29 @@ function addSongEntry() {
         <input type="number" name="songs[${songCount}][individual_price]" step="0.01" value="0.99" min="0" />
       </div>
       <div class="form-group">
+        <label>Genre</label>
+        <select name="songs[${songCount}][genre]">
+          <option value="">Use Album Genre</option>
+          <option value="RnB">RnB</option>
+          <option value="Soul">Soul</option>
+          <option value="Funk">Funk</option>
+          <option value="Jazz">Jazz</option>
+          <option value="Gospel">Gospel</option>
+          <option value="Blues">Blues</option>
+          <option value="Disco">Disco</option>
+          <option value="Rock">Rock</option>
+          <option value="Pop">Pop</option>
+          <option value="Country">Country</option>
+          <option value="HipHop">HipHop</option>
+          <option value="Rap">Rap</option>
+          <option value="Classical">Classical</option>
+          <option value="Reggae">Reggae</option>
+          <option value="Electronic">Electronic</option>
+          <option value="Dance">Dance</option>
+          <option value="World">World</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label style="display: flex; align-items: center; gap: 0.5rem;">
           <input type="checkbox" name="songs[${songCount}][is_explicit]" value="1" />
           Explicit Content
@@ -217,6 +240,8 @@ async function handleSubmit(event) {
     const title = formData.get(`songs[${songId}][title]`)
     const durationSeconds = formData.get(`songs[${songId}][duration_seconds]`)
     const individualPrice = formData.get(`songs[${songId}][individual_price]`)
+    const genre = formData.get(`songs[${songId}][genre]`)
+    const isExplicit = formData.get(`songs[${songId}][is_explicit]`)
     const artistOverride = formData.get(`songs[${songId}][artist_override]`)
     
     if (title && title.trim()) {
@@ -225,6 +250,8 @@ async function handleSubmit(event) {
         title: title.trim(),
         duration_seconds: durationSeconds ? parseInt(durationSeconds) : null,
         individual_price: individualPrice ? parseFloat(individualPrice) : 0.99,
+        genre: genre || null,
+        is_explicit: isExplicit ? 1 : 0,
         artist_override: artistOverride && artistOverride.trim() ? artistOverride.trim() : null
       })
     }

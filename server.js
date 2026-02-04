@@ -5,6 +5,8 @@ import { meRouter } from './routes/me.js'
 import { cartRouter } from './routes/cart.js'
 import { checkoutRouter } from './routes/checkout.js'
 import { artistsRouter } from './routes/artists.js'
+import { songsRouter } from './routes/songs.js'
+import { adminRouter } from './routes/admin.js'
 import session from 'express-session'
 
 const app = express() 
@@ -52,6 +54,10 @@ app.use('/api/auth', authRouter)
 app.use('/api/cart', cartRouter)
 
 app.use('/api/checkout', checkoutRouter)
+
+app.use('/api/songs', songsRouter)
+
+app.use('/api/admin', adminRouter)
  
 app.listen(PORT, () => { 
   console.log(`Server running at http://localhost:${PORT}`)

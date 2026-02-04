@@ -144,6 +144,15 @@ footer {
     gap: var(--space-md);
 }
 
+.button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
 .add-product-btn {
     padding: 0.5rem 1rem;
     background-color: var(--color-accent);
@@ -1028,6 +1037,30 @@ button:active {
   padding: 2rem;
 }
 
+.add-product-cta {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.add-product-cta .btn-primary {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: inline-block;
+}
+
+.add-product-cta .btn-primary:hover {
+  background-color: #e63d6d;
+  text-decoration: none;
+}
+
 .filter-section {
   display: flex;
   gap: 1rem;
@@ -1150,4 +1183,249 @@ button:active {
 
 .btn-delete {
   color: #ff6b6b;
+}
+
+/* -----------------------------------
+   Album Modal Styles
+----------------------------------- */
+.album-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.album-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.album-modal-content {
+  position: relative;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  border-radius: 12px;
+  padding: 2.5rem;
+  max-width: 650px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 76, 123, 0.2);
+  transform: scale(0.8) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.album-modal-overlay.active .album-modal-content {
+  transform: scale(1) translateY(0);
+}
+
+.album-modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.album-modal-close:hover {
+  color: var(--color-accent);
+  background: rgba(255, 76, 123, 0.1);
+}
+
+#albumModalBody {
+  color: var(--color-text);
+}
+
+.modal-album-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.modal-album-title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  margin: 1.5rem 0 0.5rem 0;
+  color: #fff;
+}
+
+.modal-album-artist {
+  font-size: 1.1rem;
+  color: var(--color-accent);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.modal-album-year {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1rem;
+}
+
+.modal-album-price {
+  font-size: 1.3rem;
+  color: var(--color-accent);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.modal-album-genre {
+  display: inline-block;
+  background: rgba(255, 76, 123, 0.2);
+  color: #fca5a5;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.modal-album-type {
+  display: inline-block;
+  background: rgba(100, 150, 200, 0.2);
+  color: #a8d4ff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-songs-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-songs-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.modal-songs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-song-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.95rem;
+}
+
+.modal-song-item:last-child {
+  border-bottom: none;
+}
+
+.modal-song-track {
+  color: var(--color-accent);
+  font-weight: 600;
+  min-width: 2.5rem;
+  margin-right: 1rem;
+}
+
+.modal-song-title {
+  flex: 1;
+  color: #fff;
+}
+
+.modal-song-duration {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  min-width: 4rem;
+  text-align: right;
+}
+
+.modal-song-explicit {
+  margin-left: 0.5rem;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+}
+
+.modal-add-cart-btn {
+  width: 100%;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.modal-add-cart-btn:hover {
+  background: #ff3860;
+  transform: translateY(-2px);
+}
+
+.modal-add-cart-btn:active {
+  transform: translateY(0);
+}
+
+/* Scrollbar styling for modal */
+.album-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.album-modal-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.album-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 76, 123, 0.3);
+  border-radius: 4px;
+}
+
+.album-modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 76, 123, 0.5);
+}
+
+/* Responsive modal */
+@media (max-width: 768px) {
+  .album-modal-content {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+
+  .modal-album-title {
+    font-size: 1.5rem;
+  }
+
+  .modal-songs-list {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
 }

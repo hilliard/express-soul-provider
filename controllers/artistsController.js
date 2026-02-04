@@ -2,9 +2,8 @@ import { getDBConnection } from '../db/db.js'
 
 // Get all artists
 export async function getArtists(req, res) {
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
-    
     const artists = await db.all(`
       SELECT 
         a.human_id,
@@ -20,22 +19,22 @@ export async function getArtists(req, res) {
       ORDER BY a.stage_name
     `)
     
-    await db.close()
     res.json(artists)
     
   } catch (err) {
     console.error('Error fetching artists:', err)
     res.status(500).json({ error: 'Failed to fetch artists' })
+  } finally {
+    await db.close()
   }
 }
 
 // Get single artist
 export async function getArtist(req, res) {
   const { id } = req.params
+  const db = await getDBConnection()
   
   try {
-    const db = await getDBConnection()
-    
     const artist = await db.get(`
       SELECT 
         a.human_id,
@@ -51,8 +50,6 @@ export async function getArtist(req, res) {
       WHERE a.human_id = ?
     `, [id])
     
-    await db.close()
-    
     if (!artist) {
       return res.status(404).json({ error: 'Artist not found' })
     }
@@ -62,6 +59,8 @@ export async function getArtist(req, res) {
   } catch (err) {
     console.error('Error fetching artist:', err)
     res.status(500).json({ error: 'Failed to fetch artist' })
+  } finally {
+    await db.close()
   }
 }
 
@@ -75,9 +74,8 @@ export async function createArtist(req, res) {
     })
   }
   
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
-    
     // 1. Create human record
     const humanResult = await db.run(
       'INSERT INTO humans (first_name, last_name) VALUES (?, ?)',
@@ -93,8 +91,6 @@ export async function createArtist(req, res) {
       [humanId, stageName.trim(), bio || null, website || null, debutYear || null]
     )
     
-    await db.close()
-    
     res.status(201).json({ 
       message: 'Artist created successfully',
       artistId: humanId,
@@ -104,6 +100,8 @@ export async function createArtist(req, res) {
   } catch (err) {
     console.error('Error creating artist:', err)
     res.status(500).json({ error: 'Failed to create artist' })
+  } finally {
+    await db.close()
   }
 }
 
@@ -112,9 +110,8 @@ export async function updateArtist(req, res) {
   const { id } = req.params
   const { firstName, lastName, stageName, bio, website, debutYear } = req.body
   
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
-    
     // Update human record
     if (firstName || lastName) {
       await db.run(
@@ -134,13 +131,13 @@ export async function updateArtist(req, res) {
       [stageName?.trim(), bio, website, debutYear, id]
     )
     
-    await db.close()
-    
     res.json({ message: 'Artist updated successfully' })
     
   } catch (err) {
     console.error('Error updating artist:', err)
     res.status(500).json({ error: 'Failed to update artist' })
+  } finally {
+    await db.close()
   }
 }
 
@@ -152,9 +149,8 @@ export async function searchArtists(req, res) {
     return res.status(400).json({ error: 'Search query required' })
   }
   
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
-    
     const searchPattern = `%${query}%`
     const artists = await db.all(`
       SELECT 
@@ -170,11 +166,12 @@ export async function searchArtists(req, res) {
       LIMIT 20
     `, [searchPattern, searchPattern, searchPattern])
     
-    await db.close()
     res.json(artists)
     
   } catch (err) {
     console.error('Error searching artists:', err)
     res.status(500).json({ error: 'Failed to search artists' })
+  } finally {
+    await db.close()
   }
 }

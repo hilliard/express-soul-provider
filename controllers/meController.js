@@ -1,9 +1,8 @@
 import { getDBConnection } from '../db/db.js'
 
 export async function getCurrentUser(req, res) {
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
-
     if (!req.session.humanId) {
 
       return res.json({ isLoggedIn: false })
@@ -33,5 +32,7 @@ export async function getCurrentUser(req, res) {
   } catch (err) {
     console.error('getCurrentUser error:', err)
     res.status(500).json({ error: 'Internal server error' })
+  } finally {
+    await db.close()
   }
 } 

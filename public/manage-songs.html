@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Songs - Soul Provider</title>
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plaster&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Container and Layout */
+    .manage-songs-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    .manage-songs-container h2 {
+      margin-top: 0;
+      color: #fff;
+    }
+
+    /* Add Song Button */
+    .add-song-cta {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .add-song-cta .btn-primary {
+      padding: 0.75rem 1.5rem;
+      background-color: var(--color-accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: inline-block;
+    }
+
+    .add-song-cta .btn-primary:hover {
+      background-color: #e63d6d;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-section input,
+    .filter-section select {
+      padding: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .filter-section input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .filter-section select option {
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    /* Stats Cards */
+    .stats-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem 1.5rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      min-width: 150px;
+    }
+
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .stat-card .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #fff;
+      margin-top: 5px;
+    }
+
+    /* Songs Table */
+    .songs-table-container {
+      overflow-x: auto;
+    }
+
+    .songs-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .songs-table thead {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .songs-table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .songs-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .songs-table tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .songs-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Song Actions */
+    .song-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-danger {
+      background-color: rgba(239, 68, 68, 0.8);
+      color: white;
+      border: none;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    /* Badges */
+    .explicit-badge {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .orphaned-badge {
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    /* Album Pills */
+    .album-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .album-pill {
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .album-pill .remove-album {
+      cursor: pointer;
+      font-weight: bold;
+      opacity: 0.7;
+    }
+
+    .album-pill .remove-album:hover {
+      opacity: 1;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .empty-state p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    /* Messages */
+    .message {
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background-color: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .message.error {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: #1a1a1a;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #fff;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.6);
+      padding: 0;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      box-sizing: border-box;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-group select option {
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(230, 61, 109, 0.1);
+    }
+
+    /* Checkbox Group */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--color-accent);
+    }
+
+    /* Modal Footer */
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* Primary Button */
+    .btn-primary {
+      background-color: var(--color-accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+      background-color: #e63d6d;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .manage-songs-container {
+        padding: 1rem;
+      }
+
+      .stats-row {
+        gap: 10px;
+      }
+
+      .stat-card {
+        flex: 1;
+        min-width: 100px;
+      }
+
+      .songs-table {
+        font-size: 12px;
+      }
+
+      .songs-table th,
+      .songs-table td {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .song-actions {
+        gap: 4px;
+      }
+
+      .btn-secondary,
+      .btn-danger {
+        padding: 0.4rem 0.6rem;
+        font-size: 11px;
+      }
+
+      .filter-section {
+        flex-direction: column;
+      }
+
+      .filter-section input,
+      .filter-section select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-banner">
+    <p id="greeting" class="top-banner-greeting"></p>
+    <button type="button" class="menu-toggle" aria-label="Toggle menu"><img src="images/menu.svg" alt="Menu icon"></button>
+    <nav class="header-menu" aria-label="Main menu">
+      <a href="/">Back to Store</a>
+      <a href="/songs.html">Shop Songs</a>
+      <button type="button" class="main-btn" id="logout-btn">Log out</button>
+    </nav>
+  </div>
+
+  <header>
+    <a href="/" aria-label="Soul Provider home page"><img src="/images/spiral_logo.png" alt="Soul Provider Logo"></a>
+    <div class="header-text">
+      <h1>Soul Provider</h1>
+      <p class="subhead">Song Management</p>
+    </div>
+  </header>
+
+  <main class="manage-songs-container">
+    <h2>Manage Songs</h2>
+    
+    <div class="add-song-cta">
+      <button class="btn-primary" onclick="openAddSongModal()">+ Add Song</button>
+    </div>
+
+    <div id="message"></div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Songs</div>
+        <div class="stat-value" id="totalSongs">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Orphaned</div>
+        <div class="stat-value" id="orphanedCount">0</div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search by song title..."
+      >
+      <select id="filterAlbum">
+        <option value="">All Songs</option>
+        <option value="orphaned">Orphaned Only</option>
+      </select>
+    </div>
+
+    <div id="songsContainer">
+      <div class="empty-state">Loading songs...</div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© Soul Provider</p>
+  </footer>
+
+  <!-- Add/Edit Song Modal -->
+  <div id="songModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add New Song</h2>
+        <button class="close-btn" onclick="closeSongModal()">×</button>
+      </div>
+
+      <form id="songForm" onsubmit="saveSong(event)">
+        <div class="form-group">
+          <label for="songTitle">Song Title *</label>
+          <input type="text" id="songTitle" required>
+        </div>
+
+        <div class="form-group">
+          <label for="songDuration">Duration (seconds)</label>
+          <input type="number" id="songDuration" min="0">
+        </div>
+
+        <div class="form-group">
+          <label for="songPrice">Individual Price</label>
+          <input type="number" id="songPrice" step="0.01" min="0" value="0.99">
+        </div>
+
+        <div class="form-group">
+          <label for="songGenre">Genre</label>
+          <select id="songGenre">
+            <option value="">Select Genre</option>
+            <option value="RnB">RnB</option>
+            <option value="Soul">Soul</option>
+            <option value="Funk">Funk</option>
+            <option value="Jazz">Jazz</option>
+            <option value="Gospel">Gospel</option>
+            <option value="Blues">Blues</option>
+            <option value="Disco">Disco</option>
+            <option value="Rock">Rock</option>
+            <option value="Pop">Pop</option>
+            <option value="Country">Country</option>
+            <option value="HipHop">HipHop</option>
+            <option value="Rap">Rap</option>
+            <option value="Classical">Classical</option>
+            <option value="Reggae">Reggae</option>
+            <option value="Electronic">Electronic</option>
+            <option value="Dance">Dance</option>
+            <option value="World">World</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="songExplicit">
+            <label for="songExplicit" style="margin: 0;">Explicit Content</label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeSongModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Save Song</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Link to Album Modal -->
+  <div id="linkAlbumModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Song to Album</h2>
+        <button class="close-btn" onclick="closeLinkModal()">×</button>
+      </div>
+
+      <form id="linkForm" onsubmit="linkSongToAlbum(event)">
+        <div class="form-group">
+          <label for="albumSelect">Select Album *</label>
+          <select id="albumSelect" required>
+            <option value="">Choose an album...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="trackNumber">Track Number</label>
+          <input type="number" id="trackNumber" min="1" value="1">
+        </div>
+
+        <div class="form-group">
+          <label for="discNumber">Disc Number</label>
+          <input type="number" id="discNumber" min="1" value="1">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeLinkModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Link to Album</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/authUI.js" type="module"></script>
+  <script src="js/menu.js" type="module"></script>
+  <script src="js/manage-songs.js" type="module"></script>
+</body>
+</html>

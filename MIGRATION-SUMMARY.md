@@ -208,3 +208,34 @@ Refer to:
 - [.github/copilot-instructions.md](../.github/copilot-instructions.md) - AI coding assistant guide
 
 All files are documented and ready to use! 🚀
+
+✅ Uniqueness Constraints Implemented
+Your database now prevents duplicate artists and has safeguards against duplicate humans. Here's what was set up:
+
+1. Artists Table - UNIQUE stage_name
+   Prevents duplicate artist names (e.g., "Stevie Wonder" can only exist once)
+   Enforced at the database level - any attempt to create a duplicate stage_name will fail with UNIQUE constraint failed
+   All existing products automatically link to the consolidated artist
+2. Humans Table - UNIQUE (first_name, last_name) for Active Users
+   Creates a composite unique index on (first_name, last_name) WHERE is_active = 1
+   Prevents duplicate "John Doe" entries among active humans
+   Allows inactive (deleted) humans to be archived without affecting the constraint
+3. Performance Indexes Added
+   idx_songs_artist_human_id - Fast queries linking songs to artists
+   idx_humans_unique_name - Fast duplicate human name detection
+   How to Use This
+   When adding a new artist:
+
+```
+// This will work:
+await db.run(
+  'INSERT INTO artists (human_id, stage_name, bio) VALUES (?, ?, ?)',
+  [humanId, 'New Artist Name', 'Bio text']
+)
+
+// This will FAIL with "UNIQUE constraint failed: artists.stage_name"
+// if an artist with that stage_name already exists
+```
+
+To consolidate existing duplicate products to one artist:
+Use the consolidation script you created:

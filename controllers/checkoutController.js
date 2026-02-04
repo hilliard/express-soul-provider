@@ -64,8 +64,8 @@ async function validateCoupon(db, couponCode, subtotal, humanId) {
  * Preview order with coupon (doesn't create order)
  */
 export async function previewOrder(req, res) {
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
     const humanId = req.session.humanId
     const { couponCode } = req.body
 
@@ -93,7 +93,6 @@ export async function previewOrder(req, res) {
       const validation = await validateCoupon(db, couponCode, subtotal, humanId)
       
       if (!validation.valid) {
-        await db.close()
         return res.status(400).json({ error: validation.error })
       }
 
@@ -109,8 +108,6 @@ export async function previewOrder(req, res) {
     const taxAmount = Math.round((subtotal - discountAmount) * taxRate * 100) / 100
     const totalAmount = Math.round((subtotal - discountAmount + taxAmount) * 100) / 100
 
-    await db.close()
-
     res.json({
       items: cartItems,
       subtotal: Math.round(subtotal * 100) / 100,
@@ -123,6 +120,8 @@ export async function previewOrder(req, res) {
   } catch (err) {
     console.error('Preview order error:', err)
     res.status(500).json({ error: 'Failed to preview order' })
+  } finally {
+    await db.close()
   }
 }
 
@@ -130,8 +129,8 @@ export async function previewOrder(req, res) {
  * Create order from cart items
  */
 export async function createOrder(req, res) {
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
     const humanId = req.session.humanId
     const { couponCode, notes } = req.body
 
@@ -145,7 +144,6 @@ export async function createOrder(req, res) {
     )
 
     if (!cartItems || cartItems.length === 0) {
-      await db.close()
       return res.status(400).json({ error: 'Cart is empty' })
     }
 
@@ -160,7 +158,6 @@ export async function createOrder(req, res) {
       const validation = await validateCoupon(db, couponCode, subtotal, humanId)
       
       if (!validation.valid) {
-        await db.close()
         return res.status(400).json({ error: validation.error })
       }
 
@@ -212,8 +209,6 @@ export async function createOrder(req, res) {
     // Clear cart
     await db.run('DELETE FROM cart_items WHERE human_id = ?', [humanId])
 
-    await db.close()
-
     res.status(201).json({
       message: 'Order created successfully',
       orderId: orderId,
@@ -224,6 +219,8 @@ export async function createOrder(req, res) {
   } catch (err) {
     console.error('Create order error:', err)
     res.status(500).json({ error: 'Failed to create order' })
+  } finally {
+    await db.close()
   }
 }
 
@@ -231,13 +228,12 @@ export async function createOrder(req, res) {
  * Get order details
  */
 export async function getOrder(req, res) {
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
     const humanId = req.session.humanId
     const orderId = parseInt(req.params.orderId, 10)
 
     if (isNaN(orderId)) {
-      await db.close()
       return res.status(400).json({ error: 'Invalid order ID' })
     }
 
@@ -248,7 +244,6 @@ export async function getOrder(req, res) {
     )
 
     if (!order) {
-      await db.close()
       return res.status(404).json({ error: 'Order not found' })
     }
 
@@ -270,8 +265,6 @@ export async function getOrder(req, res) {
       [orderId]
     )
 
-    await db.close()
-
     res.json({
       order: order,
       items: items,
@@ -281,6 +274,8 @@ export async function getOrder(req, res) {
   } catch (err) {
     console.error('Get order error:', err)
     res.status(500).json({ error: 'Failed to retrieve order' })
+  } finally {
+    await db.close()
   }
 }
 
@@ -288,8 +283,8 @@ export async function getOrder(req, res) {
  * Get all orders for current user
  */
 export async function getUserOrders(req, res) {
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
     const humanId = req.session.humanId
 
     const orders = await db.all(
@@ -300,13 +295,13 @@ export async function getUserOrders(req, res) {
       [humanId]
     )
 
-    await db.close()
-
     res.json({ orders: orders })
 
   } catch (err) {
     console.error('Get user orders error:', err)
     res.status(500).json({ error: 'Failed to retrieve orders' })
+  } finally {
+    await db.close()
   }
 }
 
@@ -314,13 +309,12 @@ export async function getUserOrders(req, res) {
  * Validate coupon code (without creating order)
  */
 export async function validateCouponCode(req, res) {
+  const db = await getDBConnection()
   try {
-    const db = await getDBConnection()
     const humanId = req.session.humanId
     const { couponCode } = req.body
 
     if (!couponCode) {
-      await db.close()
       return res.status(400).json({ error: 'Coupon code required' })
     }
 
@@ -336,12 +330,10 @@ export async function validateCouponCode(req, res) {
     const subtotal = result?.subtotal || 0
 
     if (subtotal === 0) {
-      await db.close()
       return res.status(400).json({ error: 'Cart is empty' })
     }
 
     const validation = await validateCoupon(db, couponCode, subtotal, humanId)
-    await db.close()
 
     if (!validation.valid) {
       return res.status(400).json({ error: validation.error })
@@ -357,5 +349,7 @@ export async function validateCouponCode(req, res) {
   } catch (err) {
     console.error('Validate coupon error:', err)
     res.status(500).json({ error: 'Failed to validate coupon' })
+  } finally {
+    await db.close()
   }
 }

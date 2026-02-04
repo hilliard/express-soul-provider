@@ -27,12 +27,34 @@ export async function getGenres(req, res) {
   res.json(GENRES)
 }
 
+export async function getSingleProduct(req, res) {
+  const db = await getDBConnection()
+  try {
+    const productId = parseInt(req.params.id, 10)
+
+    if (isNaN(productId)) {
+      return res.status(400).json({ error: 'Invalid product ID' })
+    }
+
+    const product = await db.get('SELECT * FROM products WHERE id = ?', [productId])
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' })
+    }
+
+    res.json(product)
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch product', details: err.message })
+  } finally {
+    await db.close()
+  }
+}
+
 export async function getProducts(req, res) {
 
+  const db = await getDBConnection()
+
   try {
-
-    const db = await getDBConnection()
-
     let query = 'SELECT * FROM products'
     let params = []
 
@@ -63,12 +85,10 @@ export async function getProducts(req, res) {
    // console.log('Products returned:', products.length)
 
     res.json(products)
-
-
   } catch (err) {
-
     res.status(500).json({error: 'Failed to fetch products', details: err.message})
-
+  } finally {
+    await db.close()
   }
 
 }
@@ -135,27 +155,73 @@ export async function createProduct(req, res) {
     )
 
     const productId = result.lastID
+    
+    // For music products, try to find or create the artist in artists table
+    let artistHumanId = null
+    if (['Album', 'Single', 'EP'].includes(type)) {
+      // Try to find artist by stage_name (case-insensitive match)
+      let artistRecord = await db.get(
+        'SELECT human_id FROM artists WHERE LOWER(stage_name) = LOWER(?)',
+        [artist.trim()]
+      )
+      
+      // If artist doesn't exist, create a new human and artist record
+      if (!artistRecord) {
+        // Create a human record for this artist
+        const humanResult = await db.run(
+          'INSERT INTO humans (first_name, last_name) VALUES (?, ?)',
+          [artist.trim(), ''] // Single name artists: store full name in first_name
+        )
+        
+        const newHumanId = humanResult.lastID
+        
+        // Create artist record
+        await db.run(
+          'INSERT INTO artists (human_id, stage_name) VALUES (?, ?)',
+          [newHumanId, artist.trim()]
+        )
+        
+        artistHumanId = newHumanId
+      } else {
+        artistHumanId = artistRecord.human_id
+      }
+    }
 
-    // Insert songs if provided
+    // Insert songs if provided (using bridge table pattern)
     let songsInserted = 0
     if (songs && Array.isArray(songs) && songs.length > 0) {
       for (const song of songs) {
-        const { track_number, title: songTitle, duration_seconds, individual_price, artist_override } = song
+        const { track_number, title: songTitle, duration_seconds, individual_price, artist_override, disc_number } = song
         
         if (!songTitle || !songTitle.trim()) {
           continue // Skip songs without a title
         }
         
-        await db.run(
-          `INSERT INTO songs (product_id, track_number, title, duration_seconds, individual_price, artist_override) 
+        // 1. Create the song record with artist_human_id
+        const songResult = await db.run(
+          `INSERT INTO songs (title, duration_seconds, individual_price, artist_human_id, genre, is_explicit) 
            VALUES (?, ?, ?, ?, ?, ?)`,
           [
-            productId,
-            track_number || 1,
             songTitle.trim(),
             duration_seconds || null,
             individual_price || 0.99,
-            artist_override && artist_override.trim() ? artist_override.trim() : null
+            artistHumanId, // Set artist_human_id from the album's artist
+            song.genre || productGenre || null, // Use song genre if specified, otherwise album genre
+            song.is_explicit ? 1 : 0
+          ]
+        )
+        
+        const songId = songResult.lastID
+        
+        // 2. Link song to album via bridge table
+        await db.run(
+          `INSERT INTO album_songs (album_id, song_id, track_number, disc_number) 
+           VALUES (?, ?, ?, ?)`,
+          [
+            productId,
+            songId,
+            track_number || 1,
+            disc_number || 1
           ]
         )
         

@@ -18,6 +18,8 @@ import * as migration005 from './migrations/005-add-songs-and-product-types.js'
 import * as migration006 from './migrations/006-songs-bridge-table-and-media.js'
 import * as migration007 from './migrations/007-seed-artists-from-products.js'
 import * as migration008 from './migrations/008-rename-artist-id-to-artist-human-id.js'
+import * as migration009 from './migrations/009-unique-constraints.js'
+import * as migration010 from './migrations/010-add-song-support-to-cart.js'
 
 const migrations = [
   { id: '001', name: 'create-new-schema', module: migration001 },
@@ -27,7 +29,9 @@ const migrations = [
   { id: '005', name: 'add-songs-and-product-types', module: migration005 },
   { id: '006', name: 'songs-bridge-table-and-media', module: migration006 },
   { id: '007', name: 'seed-artists-from-products', module: migration007 },
-  { id: '008', name: 'rename-artist-id-to-artist-human-id', module: migration008 }
+  { id: '008', name: 'rename-artist-id-to-artist-human-id', module: migration008 },
+  { id: '009', name: 'unique-constraints', module: migration009 },
+  { id: '010', name: 'add-song-support-to-cart', module: migration010 }
 ]
 
 async function createMigrationsTable() {

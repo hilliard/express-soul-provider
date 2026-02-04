@@ -47,26 +47,38 @@ export function showHideMenuItems(user) {
   if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline' : 'none'
 }
 
-// ===== Show add product button for admin/artist roles =====
+// ===== Show add product button for admin roles only =====
 
 export function showAddProductButton(user) {
   const addProductLink = document.getElementById('add-product-link')
   if (!addProductLink) return
   
   const roles = user && user.roles ? user.roles : []
-  const canAddProducts = roles.includes('admin') || roles.includes('artist')
+  const canAddProducts = roles.includes('admin')
   
   addProductLink.style.display = canAddProducts ? 'inline-block' : 'none'
 }
 
-// ===== Show manage products button for admin/artist roles =====
+// ===== Show manage songs button for admin roles only =====
+
+export function showManageSongsButton(user) {
+  const manageSongsLink = document.getElementById('manage-songs-link')
+  if (!manageSongsLink) return
+  
+  const roles = user && user.roles ? user.roles : []
+  const canManageSongs = roles.includes('admin')
+  
+  manageSongsLink.style.display = canManageSongs ? 'inline-block' : 'none'
+}
+
+// ===== Show manage products button for admin roles only =====
 
 export function showManageProductsButton(user) {
   const manageProductsLink = document.getElementById('manage-products-link')
   if (!manageProductsLink) return
   
   const roles = user && user.roles ? user.roles : []
-  const canManageProducts = roles.includes('admin') || roles.includes('artist')
+  const canManageProducts = roles.includes('admin')
   
   manageProductsLink.style.display = canManageProducts ? 'inline-block' : 'none'
 }

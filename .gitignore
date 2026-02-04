@@ -2,3 +2,4 @@ node_modules/
 database.db
 database.backup*.db
 .env
+/public/media_assets

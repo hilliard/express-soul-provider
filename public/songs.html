@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plaster&family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <title>Shop Songs - Soul Provider</title>
+  <style>
+    .song-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .song-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--color-accent);
+      transform: translateY(-4px);
+    }
+
+    .song-card h3 {
+      margin: 0.5rem 0 0 0;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .song-card .artist {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      margin: 0.25rem 0;
+    }
+
+    .song-card .meta {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+      margin: 0.5rem 0;
+    }
+
+    .song-card .price {
+      font-size: 1.25rem;
+      color: var(--color-accent);
+      font-weight: 600;
+      margin: 0.75rem 0 1rem 0;
+    }
+
+    .song-card .genre-label {
+      display: inline-block;
+      background: rgba(230, 61, 109, 0.2);
+      color: #fca5a5;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .song-card .album-info {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.8rem;
+      margin: 0.5rem 0;
+    }
+
+    .add-btn {
+      background-color: var(--color-accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: auto;
+      transition: background-color 0.3s;
+    }
+
+    .add-btn:hover {
+      background-color: #e63d6d;
+    }
+
+    .songs-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      padding: 2rem 0;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-title h1 {
+      font-family: 'Plaster', cursive;
+      font-size: 2.5rem;
+      color: #fff;
+      margin: 0;
+    }
+
+    .page-title p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
+      margin: 0.5rem 0 0 0;
+    }
+
+    .genre-select-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
+    }
+
+    .genre-select-container label {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .genre-select-container select {
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background-color: rgba(26, 26, 26, 0.8);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      min-width: 180px;
+    }
+
+    .genre-select-container select:hover {
+      border-color: var(--color-accent);
+    }
+
+    .genre-select-container select:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 2px rgba(230, 61, 109, 0.2);
+    }
+
+    .genre-select-container select option {
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .songs-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+
+      .page-title h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-banner" id="top-banner">
+    <p id="greeting" class="top-banner-greeting"></p>
+    <a href="/cart.html" id="cart-banner" class="cart-banner-link" aria-label="View shopping cart"></a>
+    <button type="button" class="menu-toggle" aria-label="Toggle menu"><img src="images/menu.svg" alt="Menu icon"></button>
+    <nav class="header-menu" aria-label="Main menu">
+      <a href="/" class="nav-link">Browse Products</a>
+      <a href="/login.html" id="login">Log in</a>
+      <a href="/signup.html" id="signup">Sign up</a>
+      <button type="button" class="main-btn" id="logout-btn">Log out</button>
+    </nav>
+  </div>
+
+  <header>
+    <a href="/" aria-label="Soul Provider home page"><img src="/images/spiral_logo.png" alt="Soul Provider Logo"></a>
+    <div class="header-text">
+      <h1>Soul Provider</h1>
+      <p class="subhead">Shop Individual Songs</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-title">
+      <h1>Discover Songs</h1>
+      <p>Listen to individual tracks from your favorite artists</p>
+    </div>
+
+    <div class="genre-select-container">
+      <label for="genre-select">View by genre</label>
+      <select id="genre-select">
+        <option value="">Show All</option>
+      </select>
+    </div>
+
+    <div class="products" id="songs-container"></div>
+  </main>
+
+  <footer>
+    <p>© Soul Provider</p>
+  </footer>
+
+  <script src="js/songs-shop.js" type="module"></script>
+  <script src="js/menu.js" type="module"></script>
+</body>
+</html>

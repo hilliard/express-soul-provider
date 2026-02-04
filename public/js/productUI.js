@@ -6,7 +6,8 @@ export function renderProducts(products) {
   const albumsContainer = document.getElementById('products-container')
   const cards = products.map((album) => {
     // Handle image path - if image already includes 'images/', don't add it again
-    const imagePath = album.image.startsWith('images/') ? album.image : `images/${album.image}`
+    // Handle image path - if image already includes 'images/' or 'media_assets/', don't add prefix
+    const imagePath = album.image.startsWith('images/') || album.image.startsWith('media_assets/') ? album.image : `images/${album.image}`;
     
     // Display 'Merch' for merchandise items instead of null genre
     const displayGenre = album.genre || (album.type === 'Merch' ? 'Merch' : 'Music')

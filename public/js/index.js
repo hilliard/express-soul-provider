@@ -1,5 +1,7 @@
-import { checkAuth, renderGreeting, showHideMenuItems, showAddProductButton, showManageProductsButton } from './authUI.js'
+import { checkAuth, renderGreeting, showHideMenuItems, showAddProductButton, showManageProductsButton, showManageSongsButton } from './authUI.js'
 import { logout } from './logout.js'
+import { initAlbumModal } from './album-modal.js'
+import { renderNavbar } from './menu.js'
 
 // ===== Menu Toggle =====
 const toggle = document.querySelector('.menu-toggle');
@@ -23,7 +25,8 @@ async function getProducts(filters = {}) {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Failed to fetch products:', error);
     // Return an empty array in case of an error so the UI doesn't break
@@ -45,8 +48,8 @@ function renderProducts(products) {
 
   const cards = products
     .map((album) => {
-      // Handle image path - if image already includes 'images/', don't add it again
-      const imagePath = album.image.startsWith('images/') ? album.image : `images/${album.image}`;
+      // Handle image path - if image already includes 'images/' or 'media_assets/', don't add prefix
+      const imagePath = album.image.startsWith('images/') || album.image.startsWith('media_assets/') ? album.image : `images/${album.image}`;
       
       // Display 'Merch' for merchandise items instead of null genre
       const displayGenre = album.genre || (album.type === 'Merch' ? 'Merch' : 'Music');
@@ -57,7 +60,7 @@ function renderProducts(products) {
         <h2>${album.title}</h2>
         <h3>${album.artist}</h3>
         <p>$${album.price}</p>
-        <button class="add-btn" data-product-id="${album.id}">Add to Cart</button>
+        <button class="add-btn" data-id="${album.id}">Add to Cart</button>
         <p class="genre-label">${displayGenre}</p>
       </div>
     `;
@@ -77,25 +80,36 @@ function renderProducts(products) {
 function attachCartButtonListeners() {
   document.querySelectorAll('.add-btn').forEach(button => {
     button.addEventListener('click', async (event) => {
-      const productId = event.currentTarget.dataset.productId;
+      event.stopPropagation() // Prevent modal from opening
+      const productId = parseInt(event.currentTarget.dataset.id, 10)
+
+      if (isNaN(productId)) {
+        console.error('Invalid product ID:', event.currentTarget.dataset.id)
+        alert('Error: Invalid product')
+        return
+      }
 
       try {
         const res = await fetch('/api/cart/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ productId })
+          body: JSON.stringify({ productId: productId })
         });
 
         if (!res.ok) {
+          const error = await res.json()
+          console.error('Add to cart error:', error)
           // User not logged in, redirect to login
           window.location.href = '/login.html';
           return;
         }
 
+        alert('Added to cart!')
         await updateCartIcon();
       } catch (err) {
         console.error('Error adding to cart:', err);
+        alert('Error adding to cart')
       }
     });
   });
@@ -106,7 +120,7 @@ function attachCartButtonListeners() {
  * Updates the cart icon badge with the current item count.
  * Only makes the request if the user is logged in.
  */
-async function updateCartIcon() {
+export async function updateCartIcon() {
   try {
     // Check if user is logged in first
     const user = await checkAuth()
@@ -222,21 +236,30 @@ if (logoutBtn) {
  * Fetches and displays all products on initial page load.
  */
 async function init() {
-  // Check auth status and update UI
-  const user = await checkAuth()
-  renderGreeting(user)
-  showHideMenuItems(user)
-  showAddProductButton(user)
-  showManageProductsButton(user)
-  
-  // Only update cart icon if user is logged in
-  if (user) {
-    await updateCartIcon()
+  try {
+    // Initialize album modal
+    initAlbumModal()
+    
+    // Check auth status and update UI
+    const user = await checkAuth()
+    renderGreeting(user)
+    showHideMenuItems(user)
+    showAddProductButton(user)
+    showManageProductsButton(user)
+    showManageSongsButton(user)
+    await renderNavbar()
+    
+    // Only update cart icon if user is logged in
+    if (user) {
+      await updateCartIcon()
+    }
+    
+    await populateGenreSelect();
+    const products = await getProducts();
+    renderProducts(products);
+  } catch (err) {
+    console.error('Error during init:', err);
   }
-  
-  await populateGenreSelect();
-  const products = await getProducts();
-  renderProducts(products);
 }
 
 // Run the initialization function when the script loads
